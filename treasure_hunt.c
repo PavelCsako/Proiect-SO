@@ -65,13 +65,13 @@ void list_treasures(const char *hunt_id) {
   if (stat(file_path, &st) == 0) {
     printf("Hunt: %s\n", hunt_id);
     printf("File size: %ld bytes\n", st.st_size);
-    printf("Last modified: %s\n", ctime(&st.st_mtime));
+    //printf("Last modified: %d\n", ctime(&st.st_mtime));
   }
 
   Treasure tr;
   while (read(fd, &tr, sizeof(Treasure)) == sizeof(Treasure)) {
     printf("ID: %d, User: %s, GPS: (%.2f, %.2f), Clue: %s, Value: %d\n",
-	   tr.id, tr.username, tr.latitude,
+	   tr.ID, tr.username, tr.latitude,
 	   tr.longitude, tr.clue, tr.value);
   }
   close(fd);
@@ -98,7 +98,7 @@ void remove_treasure(const char *hunt_id, int treasure_id) {
 
   int found = 0;
   while (read(fd, &temp, sizeof(Treasure)) == sizeof(Treasure)) {
-    if (temp.id != treasure_id) {
+    if (temp.ID != treasure_id) {
       fwrite(&temp, sizeof(Treasure), 1, tmp_file);
     } else {
       found = 1;

@@ -23,8 +23,7 @@ void add_treasure(const char *hunt_id) {
     char dir_path[100];
     snprintf(dir_path, sizeof(dir_path), "%s", hunt_id);
 
-    mkdir(dir_path, 0777);  // Creează directorul dacă nu există
-
+    mkdir(dir_path, 0777);  
     char file_path[150];
     snprintf(file_path, sizeof(file_path), "%s/treasures.dat", dir_path);
 
@@ -109,8 +108,8 @@ void remove_treasure(const char *hunt_id, int treasure_id) {
         return;
     }
 
-    unlink(file_path);              // Șterge fișierul original
-    rename("temp.dat", file_path);  // Redenumește temporarul
+    unlink(file_path);              
+    rename("temp.dat", file_path);  
     printf("Comoara cu ID-ul %d a fost ștearsă.\n", treasure_id);
 }
 
@@ -120,9 +119,9 @@ void remove_hunt(const char *hunt_id) {
     char log_path[150];
     snprintf(log_path, sizeof(log_path), "%s/logged_hunt", hunt_id);
 
-    unlink(file_path); // Șterge fișierul comorilor
-    unlink(log_path);  // Șterge eventualul fișier de log
-    rmdir(hunt_id);    // Șterge folderul
+    unlink(file_path); 
+    unlink(log_path);  
+    rmdir(hunt_id);    
 
     printf("Vânătoarea %s a fost ștearsă.\n", hunt_id);
 }

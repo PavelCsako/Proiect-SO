@@ -8,6 +8,8 @@
 #include <errno.h>
 #include <dirent.h>
 #include <time.h>
+#include <signal.h>
+#include <unistd.h>
 
 #define UMAX 50
 #define CMAX 100
@@ -225,7 +227,39 @@ void remove_hunt(const char *hunt_id) {
 
   printf("Vânătoarea %s a fost ștearsă.\n", hunt_id);
 }
+ 
+void list_all_hunts() {
+    DIR *dir = opendir(".");
+    if (!dir) {
+        perror("Nu pot deschide directorul curent");
+        return;
+    }
 
+    struct dirent *entry;
+    while ((entry = readdir(dir)) != NULL) {
+        if (entry->d_type == DT_DIR &&
+            strcmp(entry->d_name, ".") != 0 &&
+            strcmp(entry->d_name, "..") != 0) {
+
+            char filepath[512];
+            snprintf(filepath, sizeof(filepath), "%s/treasures.dat", entry->d_name);
+
+            FILE *f = fopen(filepath, "rb");
+            if (!f) continue;
+
+            int count = 0;
+            Treasure tr;
+            while (fread(&tr, sizeof(Treasure), 1, f) == 1) {
+                count++;
+            }
+            fclose(f);
+
+            printf("Hunt: %s - %d comori\n", entry->d_name, count);
+        }
+    }
+    closedir(dir);
+}
+ 
 int main(int argc, char *argv[]) {
   if (argc < 3) {
     printf("Utilizare: %s --comanda <hunt_id> [opțiuni]\n", argv[0]);
@@ -250,7 +284,9 @@ int main(int argc, char *argv[]) {
     remove_treasure(argv[2], atoi(argv[3]));
   } else if (strcmp(argv[1], "--remove_hunt") == 0) {
     remove_hunt(argv[2]);
-  } else {
+  } else if (strcmp(argv[1], "--list-hunts") == 0) {
+    list_all_hunts();
+  }else {
     printf("Comandă necunoscută.\n");
   }
 
